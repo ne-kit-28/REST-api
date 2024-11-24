@@ -3,11 +3,13 @@ package com.example.demo.util;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
+@Component
 public class JwtUtil {
-    private final String secret = "my_secret_key_which_can_be_used_because_i_need_long_key"; // Храните в настройках
+    private final String secret = "mySecretKeyWhichCanBeUsedBecauseINeedLongKeyReally"; // Храните в настройках
     private final long expirationMs = 3600000; // 1 час
 
     public String generateToken(String username) {

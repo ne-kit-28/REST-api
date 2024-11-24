@@ -2,7 +2,12 @@ package com.example.demo.controller;
 
 import com.example.demo.domain.User;
 import com.example.demo.service.TestService;
+import com.example.demo.util.JwtUtil;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -14,12 +19,27 @@ import java.util.stream.Stream;
 public class TestController {
 
     private final TestService testService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
 
-    public TestController(TestService testService) {
+
+
+    public TestController(TestService testService, AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
         this.testService = testService;
+        this.authenticationManager = authenticationManager;
+        this.jwtUtil = jwtUtil;
+    }
+
+    @PostMapping("/login")
+    public String login() {
+        Authentication auth = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken("login", "password")
+        );
+        return jwtUtil.generateToken(auth.getName());
     }
 
     @GetMapping("get/all")
+    @PreAuthorize("hasRole('ADMIN')")
     ResponseEntity<ArrayList<User>> getAll() {
         return ResponseEntity.ok(testService.getAllUsers());
     }
@@ -31,7 +51,7 @@ public class TestController {
     }
 
     @PostMapping("/post")
-    ResponseEntity<Void> create() {
+    ResponseEntity<String> create() {
 
         class SaveThread extends Thread {
 
@@ -56,7 +76,7 @@ public class TestController {
             }
         }
 
-        List<User> list = Stream.generate(User::generate).limit(1000).toList();
+        List<User> list = Stream.generate(User::generate).limit(1).toList();
         int i = 1;
         for(User u : list) {
             new SaveThread(i, u).start();
@@ -64,6 +84,7 @@ public class TestController {
             //userRepository.save(u);
         }
 
-        return ResponseEntity.ok().build();
+        JwtUtil util = new JwtUtil();
+        return ResponseEntity.ok(util.generateToken("login"));
     }
 }

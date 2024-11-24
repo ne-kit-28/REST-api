@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 1732448732028-1
+      id: 1732462375603-1
       author: Tuf 15 (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -18,6 +18,9 @@ databaseChangeLog:
                   type: VARCHAR(255)
               - column:
                   name: password
+                  type: VARCHAR(255)
+              - column:
+                  name: role
                   type: VARCHAR(255)
               - column:
                   name: name

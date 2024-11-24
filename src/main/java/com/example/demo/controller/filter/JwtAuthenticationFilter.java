@@ -34,6 +34,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
             username = jwtUtil.getUsernameFromToken(token);
+        } else {
+            //response.sendError(HttpServletResponse.SC_FORBIDDEN, "Error in authHeader");
+            //return;
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -42,7 +45,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 var auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(auth);
+            } else {
+                //response.sendError(HttpServletResponse.SC_FORBIDDEN, "Token is not valid");
+                //return;
             }
+        } else {
+            //response.sendError(HttpServletResponse.SC_FORBIDDEN, "Username is miss");
+            //return;
         }
 
         filterChain.doFilter(request, response);

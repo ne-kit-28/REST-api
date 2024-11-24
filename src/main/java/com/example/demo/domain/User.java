@@ -42,6 +42,7 @@ public class User implements UserDetails {
 
     public static User generate() {
         return User.builder()
+                .login("login")
                 .name("Ivan" + (int)(Math.random() * 10))
                 .surname("Ivanov")
                 .address(new Address("Mira", (int)(Math.random() * 100)))
