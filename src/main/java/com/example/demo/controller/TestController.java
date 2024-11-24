@@ -27,9 +27,29 @@ public class TestController {
     @PostMapping("/post")
     ResponseEntity<Void> create() {
 
-        List<User> list = Stream.generate(User::generate).limit(10).toList();
-        for(User u : list)
-            userRepository.save(u);
+        class SaveThread extends Thread {
+
+            private final User user;
+
+            public SaveThread(int id, User user) {
+                super(String.valueOf(id));
+                this.user = user;
+            }
+
+            @Override
+            public void run() {
+                userRepository.save(user);
+                System.out.println("saved by " + this.getName());
+            }
+        }
+
+        List<User> list = Stream.generate(User::generate).limit(1000).toList();
+        int i = 1;
+        for(User u : list) {
+            new SaveThread(i, u).start();
+            ++i;
+            //userRepository.save(u);
+        }
         return ResponseEntity.ok().build();
     }
 }
