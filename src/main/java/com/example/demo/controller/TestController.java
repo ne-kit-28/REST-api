@@ -1,27 +1,33 @@
 package com.example.demo.controller;
 
 import com.example.demo.domain.User;
-import com.example.demo.repository.UserRepository;
+import com.example.demo.service.TestService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/admin")
 public class TestController {
 
-    private final UserRepository userRepository;
+    private final TestService testService;
 
-    public TestController(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public TestController(TestService testService) {
+        this.testService = testService;
+    }
+
+    @GetMapping("get/all")
+    ResponseEntity<ArrayList<User>> getAll() {
+        return ResponseEntity.ok(testService.getAllUsers());
     }
 
     @DeleteMapping("/delete/{house}")
-    ResponseEntity<Void> delete(@PathVariable("house") int house) {
-        userRepository.deleteByAddress_House(house);
-        return ResponseEntity.ok().build();
+    ResponseEntity<Integer> delete(@PathVariable("house") int house) {
+        int count = testService.deleteUserByHouseNumber(house);
+        return ResponseEntity.ok().body(count);
     }
 
     @PostMapping("/post")
@@ -38,8 +44,15 @@ public class TestController {
 
             @Override
             public void run() {
-                userRepository.save(user);
+
+                //this.setDaemon(true); //установка демона
+
+                //Thread.interrupted(); //возвращает прерван ли поток
+
+                testService.saveUser(user);
                 System.out.println("saved by " + this.getName());
+
+                this.interrupt(); //тут ничего не делает, но переводит бул поле в true
             }
         }
 
@@ -50,6 +63,7 @@ public class TestController {
             ++i;
             //userRepository.save(u);
         }
+
         return ResponseEntity.ok().build();
     }
 }

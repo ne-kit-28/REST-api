@@ -23,6 +23,10 @@ public class User {
     @Id
     private UUID id;
 
+    private String login;
+
+    private String password;
+
     private String name;
 
     private String surname;
