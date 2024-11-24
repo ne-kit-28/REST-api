@@ -10,4 +10,6 @@ public interface TestService {
     void saveUser(User user);
 
     ArrayList<User> getAllUsers();
+
+    User loadUserByUsername(String userName);
 }

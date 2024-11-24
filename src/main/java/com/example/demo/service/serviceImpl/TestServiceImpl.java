@@ -34,4 +34,9 @@ public class TestServiceImpl implements TestService {
         List<User> list = userRepository.findAll();
         return new ArrayList<>(list);
     }
+
+    @Override
+    public User loadUserByUsername(String userName) {
+        return userRepository.findByLogin(userName);
+    }
 }

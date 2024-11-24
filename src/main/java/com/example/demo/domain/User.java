@@ -6,7 +6,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -17,7 +21,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users")
-public class User {
+public class User implements UserDetails {
 
     @UuidGenerator
     @Id
@@ -26,6 +30,8 @@ public class User {
     private String login;
 
     private String password;
+
+    private String role;
 
     private String name;
 
@@ -40,5 +46,15 @@ public class User {
                 .surname("Ivanov")
                 .address(new Address("Mira", (int)(Math.random() * 100)))
                 .build();
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(this::getRole);
+    }
+
+    @Override
+    public String getUsername() {
+        return login;
     }
 }
