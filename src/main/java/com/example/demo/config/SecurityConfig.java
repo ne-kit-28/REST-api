@@ -28,7 +28,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Отключаем CSRF
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(new AntPathRequestMatcher("/api/admin/login")).permitAll() // Разрешаем доступ к /auth/**
+                        .requestMatchers(new AntPathRequestMatcher("/api/admin/**")).permitAll() // Разрешаем доступ к /auth/**
                         .anyRequest().authenticated() // Все остальные запросы требуют аутентификации
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // Добавляем фильтр

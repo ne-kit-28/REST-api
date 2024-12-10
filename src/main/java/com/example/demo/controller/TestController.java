@@ -3,6 +3,8 @@ package com.example.demo.controller;
 import com.example.demo.domain.User;
 import com.example.demo.service.TestService;
 import com.example.demo.util.JwtUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,9 +24,8 @@ public class TestController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
-
-
-    public TestController(TestService testService, AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
+    @Autowired
+    public TestController(@Qualifier("Second") TestService testService, AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
         this.testService = testService;
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
@@ -39,7 +40,7 @@ public class TestController {
     }
 
     @GetMapping("get/all")
-    @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('ADMIN')")
     ResponseEntity<ArrayList<User>> getAll() {
         return ResponseEntity.ok(testService.getAllUsers());
     }
