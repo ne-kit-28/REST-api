@@ -2,6 +2,7 @@ package com.example.demo.service.serviceImpl;
 
 import com.example.demo.domain.User;
 import com.example.demo.service.TestService;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,8 @@ public class TestServiceNewImpl implements TestService {
 
     @Override
     public User loadUserByUsername(String userName) {
-        return new User();
+        return User.builder()
+                .role("ROLE_ADMIN")
+                .build();
     }
 }

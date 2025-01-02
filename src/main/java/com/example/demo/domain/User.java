@@ -7,6 +7,7 @@ import jakarta.persistence.Table;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -45,13 +46,14 @@ public class User implements UserDetails {
                 .login("login")
                 .name("Ivan" + (int)(Math.random() * 10))
                 .surname("Ivanov")
+                .role("ROLE_ADMIN")
                 .address(new Address("Mira", (int)(Math.random() * 100)))
                 .build();
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(this::getRole);
+        return List.of(new SimpleGrantedAuthority(this.role));
     }
 
     @Override
