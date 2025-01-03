@@ -13,7 +13,7 @@ import java.util.UUID;
 public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findUserByAddress_HouseAndSurname(int house, String surname);
 
-    User findByLogin(String login);
+    Optional<User> findByLogin(String login);
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     @Modifying

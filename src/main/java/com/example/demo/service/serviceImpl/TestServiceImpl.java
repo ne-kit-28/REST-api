@@ -4,10 +4,13 @@ import com.example.demo.domain.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service("First")
 public class TestServiceImpl implements TestService {
@@ -36,7 +39,7 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    public User loadUserByUsername(String userName) {
+    public Optional<User> loadUserByUsername(String userName) {
         return userRepository.findByLogin(userName);
     }
 }

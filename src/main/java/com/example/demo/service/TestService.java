@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.domain.User;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 public interface TestService {
     int deleteUserByHouseNumber(int houseNumber);
@@ -11,5 +12,5 @@ public interface TestService {
 
     ArrayList<User> getAllUsers();
 
-    User loadUserByUsername(String userName);
+    Optional<User> loadUserByUsername(String userName);
 }

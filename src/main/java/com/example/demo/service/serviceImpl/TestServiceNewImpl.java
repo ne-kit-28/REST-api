@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 @Service("Second")
 @Profile("dev")
@@ -27,9 +28,9 @@ public class TestServiceNewImpl implements TestService {
     }
 
     @Override
-    public User loadUserByUsername(String userName) {
-        return User.builder()
+    public Optional<User> loadUserByUsername(String userName) {
+        return Optional.of(User.builder()
                 .role("ROLE_ADMIN")
-                .build();
+                .build());
     }
 }

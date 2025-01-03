@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SecurityController {
 
     @GetMapping("/get")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER')")
     ResponseEntity<String> getText() {
         return ResponseEntity.ok("Great!");
     }

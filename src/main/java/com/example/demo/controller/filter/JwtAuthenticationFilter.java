@@ -22,7 +22,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final TestService testService;
 
     @Autowired
-    public JwtAuthenticationFilter(JwtUtil jwtUtil, @Qualifier("Second") TestService testService) {
+    public JwtAuthenticationFilter(JwtUtil jwtUtil, @Qualifier("First") TestService testService) {
         this.jwtUtil = jwtUtil;
         this.testService = testService;
     }
@@ -43,7 +43,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = testService.loadUserByUsername(username);
+            UserDetails userDetails = testService.loadUserByUsername(username).orElseThrow(RuntimeException::new); //TODO change it
             if (jwtUtil.validateToken(token)) {
                 var auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
