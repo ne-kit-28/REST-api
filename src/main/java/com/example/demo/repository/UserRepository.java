@@ -19,4 +19,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     @Modifying
     @Query(value = "DELETE FROM users WHERE house = ?1", nativeQuery = true)
     int deleteByAddress_House(int house);
+
+    //boolean
 }

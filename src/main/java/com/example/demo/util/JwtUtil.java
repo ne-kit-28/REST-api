@@ -1,5 +1,6 @@
 package com.example.demo.util;
 
+import com.example.demo.audit.AuditAction;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -21,6 +22,7 @@ public class JwtUtil {
                 .compact();
     }
 
+    @AuditAction
     public String getUsernameFromToken(String token) {
         return Jwts.parser()
                 .setSigningKey(secret)
@@ -29,6 +31,7 @@ public class JwtUtil {
                 .getSubject();
     }
 
+    @AuditAction
     public boolean validateToken(String token) {
         try {
             Jwts.parser().setSigningKey(secret).parseClaimsJws(token);

@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.audit.AuditAction;
 import com.example.demo.domain.Address;
 import com.example.demo.domain.User;
 import com.example.demo.dto.LoginDto;
@@ -15,14 +16,11 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -44,17 +42,19 @@ public class TestController {
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginDto loginDto) {
         try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            loginDto.login(),
-                            loginDto.password()
-                    )
-            );
+//            Authentication authentication = authenticationManager.authenticate(
+//                    new UsernamePasswordAuthenticationToken(
+//                            loginDto.login(),
+//                            loginDto.password()
+//                    )
+//            );
+
+
             // Если успешно, устанавливаем аутентификацию в контекст
             //SecurityContextHolder.getContext().setAuthentication(authentication); это не надо так как установка происходит в фильтре
 
             return ResponseEntity.ok(jwtUtil.generateToken(loginDto.login()));
-        } catch (AuthenticationException ex) {
+        } catch (Exception ex/* AuthenticationException ex*/) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         }
     }
@@ -71,6 +71,7 @@ public class TestController {
         return ResponseEntity.ok().body(count);
     }
 
+    @AuditAction
     @PostMapping("/registration")
     ResponseEntity<String> registration(@RequestBody RegistrationDto registrationDto) {
 
@@ -83,7 +84,7 @@ public class TestController {
                 .address(new Address(registrationDto.street(), registrationDto.houseNumber()))
                 .build();
 
-        Optional<User> userOptional = testService.loadUserByUsername(user.getUsername());
+        Optional<User> userOptional = testService.loadUserByUsername(user.getLogin());
         if (userOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Already exist");
         }
