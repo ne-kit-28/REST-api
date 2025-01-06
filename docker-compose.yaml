@@ -1,0 +1,93 @@
+services:
+  postgres:
+    build: .
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: demo
+    ports:
+      - 5432:5432
+    networks:
+      - demo-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: nickit.nic098@yandex.ru
+      PGADMIN_DEFAULT_PASSWORD: postgres
+    ports:
+      - "5050:80"
+    networks:
+      - demo-network
+
+  zookeeper:
+    image: zookeeper:3.9.3
+    restart: "no"
+    ports:
+      - "2181:2181"
+    healthcheck:
+      test: nc -z 127.0.0.1 2181 || exit -1
+      interval: 10s
+      timeout: 5s
+      start_period: 10s
+      retries: 5
+    networks:
+      - demo-network
+
+  kafka:
+    container_name: kafkaREST-api
+    image: bitnami/kafka:3.1.0-debian-10-r106
+    ports:
+      - 9092:9093
+      - 9093:9093
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CFG_LISTENERS: INTERNAL://:9093,EXTERNAL://:9092
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_CFG_ADVERTISED_LISTENERS: INTERNAL://:9093,EXTERNAL://:9092
+#      KAFKA_CFG_LISTENERS: PLAINTEXT://:9092
+#      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://host.docker.internal:9092
+#      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+#      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+
+      ALLOW_PLAINTEXT_LISTENER: "yes"
+      KAFKA_CFG_LOG_DIRS: /bitnami/kafka/data
+      KAFKA_LOG_DIR: /opt/bitnami/kafka/logs
+    volumes:
+      - kafka_data:/bitnami
+    networks:
+      - demo-network
+    depends_on:
+      - zookeeper
+
+
+  REST-api:
+    container_name: REST-api
+    image: demo:latest
+    depends_on:
+      - postgres
+      - kafka
+    ports:
+      - 8080:8080
+    networks:
+      - demo-network
+        
+  consumer:
+    container_name: consumer
+    image: consumer:0.0.1-SNAPSHOT
+    depends_on:
+      - REST-api
+      - postgres
+      - kafka
+    networks:
+      - demo-network
+
+volumes:
+  kafka_data:
+    driver: local
+
+networks:
+  demo-network:
+    driver: bridge

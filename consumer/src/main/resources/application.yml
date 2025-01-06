@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: consumer
+
+  kafka:
+    bootstrap-servers: kafka:9092
+    listener:
+      missing-topics-fatal: false
+    topic: REST-api
