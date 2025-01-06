@@ -1,5 +1,6 @@
 package com.example.demo.audit;
 
+import com.example.demo.service.KafkaSenderService;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -13,6 +14,13 @@ import org.springframework.stereotype.Component;
 @Aspect
 //@Order(1)
 public class AspectAudit {
+
+    private final KafkaSenderService kafkaSenderService;
+
+    public AspectAudit(KafkaSenderService kafkaSenderService) {
+        this.kafkaSenderService = kafkaSenderService;
+    }
+
     @Pointcut("@annotation(AuditAction)")
     public void pointcut() {}
 
@@ -23,7 +31,10 @@ public class AspectAudit {
             //logger.info("Пользователь совершил действие: {}", auditAction);
 
             System.out.println(joinPoint.getSignature().getName() + " Выполнен");
-        } else
+            kafkaSenderService.sendAudit(joinPoint.getSignature().getName() + " Выполнен");
+        } else {
             System.out.println(auditAction.action() + " Выполнен ");
+            kafkaSenderService.sendAudit(auditAction.action() + " Выполнен ");
+        }
     }
 }
